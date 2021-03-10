@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">QA_App</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- ログイン画面用文字列 -->
+    <string name="login_email_hint">メールアドレス</string>
+    <string name="login_pass_hint">パスワード（6文字以上）</string>
+    <string name="login_name_hint">表示名</string>
+    <string name="login_createbutton_text">アカウント作成</string>
+
+    <string name="login_title">ログイン</string>
+    <string name="create_account_failure_message">アカウント作成に失敗しました</string>
+    <string name="login_failure_message">ログインに失敗しました</string>
+    <string name="login_error_message">正しく入力してください</string>
+
+    <!-- ドロワー・メニュー用文字列 -->
+    <string name="genre_select_label">ジャンル選択</string>
+    <string name="menu_hobby_label">趣味</string>
+    <string name="menu_life_label">生活</string>
+    <string name="menu_health_label">健康</string>
+    <string name="menu_compter_label">コンピューター</string>
+
+    <!-- 設定画面用文字列 -->
+    <string name="settings_titile">設定</string>
+    <string name="change_name_hint">@string/login_name_hint</string>
+    <string name="menu_change_button_label">変更</string>
+    <string name="menu_logout_label">ログアウト</string>
+
+    <string name="no_login_user">ログインしていません</string>
+    <string name="change_disp_name">表示名を変更しました</string>
+    <string name="logout_complete_message">ログアウトしました</string>
+
+</resources>
