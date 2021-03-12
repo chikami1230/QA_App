@@ -51,4 +51,11 @@
     <string name="question_send_error_message">投稿に失敗しました</string>
     <string name="question_no_select_genre">ジャンルを選択してください</string>
 
+    <!-- 回答投稿画面用文字列 -->
+    <string name="answer_text_label">回答</string>
+    <string name="post_button_label">投稿</string>
+
+    <string name="send_answer_failure">投稿に失敗しました</string>
+    <string name="answer_error_message">回答を入力してください</string>
+
 </resources>
