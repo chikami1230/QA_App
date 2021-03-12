@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle    // ← 追加
 import androidx.core.view.GravityCompat    // ← 追加
 import com.google.android.material.navigation.NavigationView    // ← 追加
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 // findViewById()を呼び出さずに該当Viewを取得するために必要となるインポート宣言
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,13 +26,24 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         setSupportActionBar(toolbar)
 
         // fabにClickリスナーを登録
-        fab.setOnClickListener { _ ->
+        fab.setOnClickListener { view->
+            // ジャンルを選択していない場合（mGenre == 0）はエラーを表示するだけ
+            if (mGenre == 0) {
+                Snackbar.make(view, getString(R.string.question_no_select_genre), Snackbar.LENGTH_LONG).show()
+            } else {
+
+            }
             // ログイン済みのユーザーを取得する
             val user = FirebaseAuth.getInstance().currentUser
 
             // ログインしていなければログイン画面に遷移させる
             if (user == null) {
                 val intent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(intent)
+            }else {
+                // ジャンルを渡して質問作成画面を起動する
+                val intent = Intent(applicationContext, QuestionSendActivity::class.java)
+                intent.putExtra("genre", mGenre)
                 startActivity(intent)
             }
         }
@@ -42,9 +54,20 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        nav_view.setNavigationItemSelectedListener(this)
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
 
         // ～～ ここまで
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+
+        // 1:趣味を既定の選択とする
+        if(mGenre == 0) {
+            onNavigationItemSelected(navigationView.menu.getItem(0))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -57,10 +80,19 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+
+        // return when (item.itemId) {
+        //    R.id.action_settings -> true
+        //    else -> super.onOptionsItemSelected(item)
+        //}
+        val id = item.itemId
+
+        if (id == R.id.action_settings) {
+            val intent = Intent(applicationContext, SettingActivity::class.java)
+            startActivity(intent)
+            return true
         }
+        return super.onOptionsItemSelected(item)
     }
 
     // ～～ ここから

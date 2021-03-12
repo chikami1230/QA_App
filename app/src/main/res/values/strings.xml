@@ -38,4 +38,17 @@
     <string name="change_disp_name">表示名を変更しました</string>
     <string name="logout_complete_message">ログアウトしました</string>
 
+    <!-- 質問投稿画面用文字列 -->
+    <string name="title_label">タイトル</string>
+    <string name="question_contents">質問内容</string>
+    <string name="image_view_label">添付画像</string>
+    <string name="send_button_label">投稿</string>
+
+    <string name="question_send_title">質問作成</string>
+    <string name="input_title">タイトルを入力してください</string>
+    <string name="question_message">質問を入力してください</string>
+    <string name="get_image">画像を取得</string>
+    <string name="question_send_error_message">投稿に失敗しました</string>
+    <string name="question_no_select_genre">ジャンルを選択してください</string>
+
 </resources>
