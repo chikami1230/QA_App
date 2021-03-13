@@ -87,6 +87,25 @@ class QuestionDetailActivity : AppCompatActivity() {
             }
         }
 
+        //課題：画面表示したとき
+        //firebase参照しお気に入りにかどうか参照しておく
+        //ログインしていないときはボタンを隠す?反応しなくする
+
+
+
+
+
+
+        //課題：favoritebuttonのclickリスナー
+        //クリックしたらお気に入りに登録/解除(firebase参照)
+        //お気に入り登録/解除で色変わるようにする
+        favoritebutton.setOnClickListener {
+
+        }
+
+
+
+
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
