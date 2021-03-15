@@ -11,3 +11,7 @@ const val AnswersPATH = "answers"
 
 // Preferenceに表示名を保存する時のキー
 const val NameKEY = "name"
+
+//課題で追加
+//Firebaseにお気に入り保存するパス
+const val FavoritePASH = "favorite"
