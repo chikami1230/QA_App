@@ -14,4 +14,4 @@ const val NameKEY = "name"
 
 //課題で追加
 //Firebaseにお気に入り保存するパス
-const val FavoritePASH = "favorite"
+const val FavoritePATH = "favorite"

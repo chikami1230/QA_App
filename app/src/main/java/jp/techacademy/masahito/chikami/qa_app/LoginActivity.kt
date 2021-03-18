@@ -14,10 +14,11 @@ import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
+    //プロパティ
     private lateinit var mAuth: FirebaseAuth
-    private lateinit var mCreateAccountListener: OnCompleteListener<AuthResult>
-    private lateinit var mLoginListener: OnCompleteListener<AuthResult>
-    private lateinit var mDataBaseReference: DatabaseReference
+    private lateinit var mCreateAccountListener: OnCompleteListener<AuthResult>   //アカウント作成処理の完了を受け取るリスナー
+    private lateinit var mLoginListener: OnCompleteListener<AuthResult>  //ログイン時処理の完了を受け取るリスナー
+    private lateinit var mDataBaseReference: DatabaseReference  //データベースへの読み書きに必要なクラス
 
     // アカウント作成時にフラグを立て、ログイン処理後に名前をFirebaseに保存する
     private var mIsCreateAccount = false
@@ -26,9 +27,9 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        mDataBaseReference = FirebaseDatabase.getInstance().reference
+        mDataBaseReference = FirebaseDatabase.getInstance().reference  //データベースへのリファレンスを取得
 
-        // FirebaseAuthのオブジェクトを取得する
+        // FirebaseAuthのオブジェクトを取得する、インスタンス取得
         mAuth = FirebaseAuth.getInstance()
 
         // アカウント作成処理のリスナー

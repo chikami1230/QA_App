@@ -3,8 +3,11 @@ package jp.techacademy.masahito.chikami.qa_app
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_question_detail.*
 
 class QuestionDetailActivity : AppCompatActivity() {
@@ -12,6 +15,9 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mQuestion: Question
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
+    private lateinit var mFavoriteRef :DatabaseReference
+    val dataBaseReference = FirebaseDatabase.getInstance().reference
+
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
@@ -91,23 +97,41 @@ class QuestionDetailActivity : AppCompatActivity() {
         //①firebase参照しお気に入りにかどうか参照しておく
         //②ログインしていないときはボタンを隠す?反応しなくする
 
-
-
-
-
-
-        //課題：favoritebuttonのclickリスナー
-        //①クリックしたらお気に入りに登録/解除(firebase参照)
-        //②お気に入り登録/解除で色変わるようにする
-        favoritebutton.setOnClickListener {
-
-        }
-
-
-
-
+        //ログイン済みユーザーを取得
+        val user = FirebaseAuth.getInstance().currentUser
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
+
+        //ログインしてなかったらfavoritebutton隠す,してたら表示
+        if (user == null){
+            favoritebutton.visibility = View.GONE
+        }else{
+            favoritebutton.visibility = View.VISIBLE
+        }
+
+        //課題：favoritebuttonのclickリスナー
+        //お気に入りをまずどこかに保持させる
+        //firebaseを参照する方法考える
+        //クリックしたらお気に入りに登録/解除(firebase参照)
+        //お気に入り登録/解除で色変わるようにする
+
+
+        favoritebutton.setOnClickListener {
+            Log.d("test","favoritebutton押した")
+            val mFavoriteRef = dataBaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
+            val data = HashMap<String,String>()
+
+            if(mFavoriteRef != null){
+                mFavoriteRef.child(mQuestion.questionUid).removeValue()
+                Log.d("test","favoriteから削除")
+                favoritebutton.setImageResource(R.drawable.ic_star_border)
+            }else{
+                data["genre"] = mQuestion.genre.toString()
+                mFavoriteRef.setValue(data)
+                Log.d("test","favoriteに登録")
+                favoritebutton.setImageResource(R.drawable.ic_star)
+            }
+        }
     }
 }

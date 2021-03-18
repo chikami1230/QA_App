@@ -53,7 +53,7 @@ class QuestionSendActivity : AppCompatActivity(), View.OnClickListener, Database
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CHOOSER_REQUEST_CODE) {
+        if (requestCode == CHOOSER_REQUEST_CODE) {  //＝＝＝データ型まで含めて完全一致
 
             if (resultCode != Activity.RESULT_OK) {
                 if (mPictureUri != null) {
