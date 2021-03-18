@@ -15,9 +15,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mQuestion: Question
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
-    private lateinit var mFavoriteRef :DatabaseReference
-    val dataBaseReference = FirebaseDatabase.getInstance().reference
-
+    private var favorite = false
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
@@ -55,6 +53,15 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         override fun onCancelled(databaseError: DatabaseError) {
 
+        }
+    }
+
+    private val mFavoriteEventListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+        }
+
+        override fun onDataChange(dateSnapShot: DataSnapshot) {
+            favorite = dateSnapShot.value != null
         }
     }
 
@@ -111,25 +118,30 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
 
         //課題：favoritebuttonのclickリスナー
-        //お気に入りをまずどこかに保持させる
+        //お気に入りを保持させる
         //firebaseを参照する方法考える
         //クリックしたらお気に入りに登録/解除(firebase参照)
         //お気に入り登録/解除で色変わるようにする
 
+        val mFavoriteRef = dataBaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
+        mFavoriteRef.addValueEventListener(mFavoriteEventListener)
+
+        if(favorite){
+            favoritebutton.setImageResource(R.drawable.ic_star_border)
+        }else{
+            favoritebutton.setImageResource(R.drawable.ic_star)
+        }
 
         favoritebutton.setOnClickListener {
             Log.d("test","favoritebutton押した")
-            val mFavoriteRef = dataBaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
-            val data = HashMap<String,String>()
 
-            if(mFavoriteRef != null){
-                mFavoriteRef.child(mQuestion.questionUid).removeValue()
+            if(favorite){
                 Log.d("test","favoriteから削除")
+                mFavoriteRef.removeValue()
                 favoritebutton.setImageResource(R.drawable.ic_star_border)
             }else{
-                data["genre"] = mQuestion.genre.toString()
-                mFavoriteRef.setValue(data)
                 Log.d("test","favoriteに登録")
+                mFavoriteRef.setValue(mQuestion.questionUid)
                 favoritebutton.setImageResource(R.drawable.ic_star)
             }
         }
