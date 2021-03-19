@@ -94,7 +94,6 @@ class QuestionDetailActivity : AppCompatActivity() {
                 intent.putExtra("question", mQuestion)
                 startActivity(intent)
                 // --- ここまで ---
-
             }
         }
 

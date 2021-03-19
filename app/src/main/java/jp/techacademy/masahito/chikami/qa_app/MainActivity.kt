@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var mFavoriteRef:DatabaseReference? = null
     private var mQuestionRef: DatabaseReference? = null
 
-
-
     private val mEventListener = object : ChildEventListener {  //データに追加・変化があった時に受け取るChildEventListenerを置く
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>    //文字列と文字列のペアを格納するMap
@@ -115,12 +113,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // --- ここまで追加する ---
 //追加
     private val mFavoriteListener = object : ValueEventListener{
-        override fun onDataChange(dateSnapshot: DataSnapshot) {
-            if(dateSnapshot.value == null){
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            if(dataSnapshot.value == null){
                 return
             }
-
-            mFavoriteMap = dateSnapshot.value as Map<String, String>
+            mFavoriteMap = dataSnapshot.value as Map<String, String>
             mQuestionRef = mDatabaseReference.child(ContentsPATH)
             mQuestionRef!!.addValueEventListener(mQuestionListener)
         }
@@ -129,10 +126,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private val mQuestionListener = object : ValueEventListener
-    {
+    private val mQuestionListener = object : ValueEventListener {
         override fun onDataChange(dateSnapshot : DataSnapshot) {
-
             for(key in mFavoriteMap.keys){
                 for(genre in 1..4){
                     val data = dateSnapshot.child(genre.toString()).child(key).value
