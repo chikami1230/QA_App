@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val answerMap = map["answers"] as Map<String, String>?
                     if (answerMap != null) {
                         for (key in answerMap.keys) {
-                            val temp = answerMap[key] as Map<String, String>
+                            val temp = answerMap[key] as Map<String, String>  //temp:temporary
                             val answerBody = temp["body"] ?: ""
                             val answerName = temp["name"] ?: ""
                             val answerUid = temp["uid"] ?: ""
