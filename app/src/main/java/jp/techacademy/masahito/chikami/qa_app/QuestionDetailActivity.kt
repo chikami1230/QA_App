@@ -15,10 +15,11 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mQuestion: Question
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
+
     private var favorite = false
 
     private val mEventListener = object : ChildEventListener {
-        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {  //snapshotはその時点の状態をそのまま保存したもの
             val map = dataSnapshot.value as Map<*, *>
 
             val answerUid = dataSnapshot.key ?: ""
@@ -40,28 +41,23 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
-
         }
 
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-
         }
 
         override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
-
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
-
         }
     }
 
     private val mFavoriteEventListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
+        override fun onDataChange(dataSnapShot: DataSnapshot) {
+            favorite = dataSnapShot.value != null
         }
-
-        override fun onDataChange(dateSnapShot: DataSnapshot) {
-            favorite = dateSnapShot.value != null
+        override fun onCancelled(p0: DatabaseError) {
         }
     }
 
@@ -76,13 +72,15 @@ class QuestionDetailActivity : AppCompatActivity() {
         title = mQuestion.title
 
         // ListViewの準備
+
         mAdapter = QuestionDetailListAdapter(this, mQuestion)
         listView.adapter = mAdapter
         mAdapter.notifyDataSetChanged()
 
+        val user = FirebaseAuth.getInstance().currentUser
+
         fab.setOnClickListener {
             // ログイン済みのユーザーを取得する
-            val user = FirebaseAuth.getInstance().currentUser
 
             if (user == null) {
                 // ログインしていなければログイン画面に遷移させる
@@ -105,7 +103,6 @@ class QuestionDetailActivity : AppCompatActivity() {
         //②ログインしていないときはボタンを隠す?反応しなくする
 
         //ログイン済みユーザーを取得
-        val user = FirebaseAuth.getInstance().currentUser
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
@@ -123,14 +120,14 @@ class QuestionDetailActivity : AppCompatActivity() {
         //クリックしたらお気に入りに登録/解除(firebase参照)
         //お気に入り登録/解除で色変わるようにする
 
-        val mFavoriteRef = dataBaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
-        mFavoriteRef.addValueEventListener(mFavoriteEventListener)
-
         if(favorite){
-            favoritebutton.setImageResource(R.drawable.ic_star_border)
-        }else{
             favoritebutton.setImageResource(R.drawable.ic_star)
+        }else{
+            favoritebutton.setImageResource(R.drawable.ic_star_border)
         }
+
+        val mFavoriteRef = dataBaseReference.child(FavoritePATH).child(mQuestion.questionUid)
+        mFavoriteRef.addValueEventListener(mFavoriteEventListener)
 
         favoritebutton.setOnClickListener {
             Log.d("test","favoritebutton押した")
