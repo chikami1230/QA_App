@@ -1,14 +1,12 @@
 package jp.techacademy.masahito.chikami.qa_app
 
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_question_detail.*
 
 class QuestionDetailActivity : AppCompatActivity() {
@@ -43,13 +41,10 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
         }
-
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
         }
-
         override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
         }
-
         override fun onCancelled(databaseError: DatabaseError) {
         }
     }
@@ -64,13 +59,10 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
-
         }
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-
         }
         override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
-
         }
         override fun onCancelled(databaseError: DatabaseError) {
         }
@@ -96,7 +88,6 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         fab.setOnClickListener {
             // ログイン済みのユーザーを取得する
-
             if (user == null) {
                 // ログインしていなければログイン画面に遷移させる
                 val intent = Intent(applicationContext, LoginActivity::class.java)
@@ -110,61 +101,45 @@ class QuestionDetailActivity : AppCompatActivity() {
                 startActivity(intent)
                 // --- ここまで ---
             }
-
         }
 
-        //課題：画面表示したとき
-        //①firebase参照しお気に入りにかどうか参照しておく
-        //②ログインしていないときはボタンを隠す?反応しなくする
-
-        //ログイン済みユーザーを取得
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString())
             .child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
     }
-        //ログインしてなかったらfavoritebutton隠す,してたら表示
+
         override fun onResume() {
             super.onResume()
 
             val user = FirebaseAuth.getInstance().currentUser
 
-            //お気に入りボタンの表示
             if (user == null) {     //ログインしていない場合
-                //お気に入りボタン非表示
                 favoritebutton.visibility = View.GONE
-
             } else {               //ログインしている場合
+                favoritebutton.visibility = View.VISIBLE
 
-                //追加
                 val dataBaseReference = FirebaseDatabase.getInstance().reference
                 mFavoriteRef = dataBaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
                 val data = HashMap<String, String>()
 
-                mFavoriteRef.addChildEventListener(mFavoriteListener)  //追加
-
-                // ボタン表示
-                favoritebutton.visibility = View.VISIBLE
+                mFavoriteRef.addChildEventListener(mFavoriteListener)
 
                 //お気に入りボタン押した時
                 favoritebutton.setOnClickListener {
                     if (flag) {
-                        //表示を切り替え
                         favoritebutton.setImageResource(R.drawable.ic_star)
                         Log.d("test","お気に入りに追加")
-                        //Fiewbaseに登録
+                        //Firebaseに登録
                         data["genre"] = mQuestion.genre.toString()
                         mFavoriteRef.setValue(data)
-                        flag = true
-
-
+                        flag = false
                     } else {
-                        //表示切り替え
                         favoritebutton.setImageResource(R.drawable.ic_star_border)
                         Log.d("test","お気に入り削除")
                         //登録削除
                         mFavoriteRef.removeValue()
-                        flag = false
+                        flag = true
                     }
                 }
             }

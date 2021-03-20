@@ -29,8 +29,6 @@ class FavoriteActivity: AppCompatActivity() {
 
             mQuestionRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val data = snapshot.value as Map<*, *>?
-
                     val map = snapshot.value as Map<String, String>
 
                     val title = map["title"] ?: ""
@@ -64,27 +62,18 @@ class FavoriteActivity: AppCompatActivity() {
                     )
                     mQuestionArrayList.add(question)
                     mAdapter.notifyDataSetChanged()
-
                 }
-
                 override fun onCancelled(firebaseError: DatabaseError) {}
             })
-
         }
+
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
-
         }
-
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-
         }
-
         override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
-
         }
-
         override fun onCancelled(databaseError: DatabaseError) {
-
         }
     }
 
@@ -107,7 +96,6 @@ class FavoriteActivity: AppCompatActivity() {
             intent.putExtra("question", mQuestionArrayList[position])
             startActivity(intent)
         }
-
     }
 
     override fun onResume() {
@@ -122,5 +110,4 @@ class FavoriteActivity: AppCompatActivity() {
         mFavoriteRef = mDatabaseReference.child(FavoritePATH).child(user!!.uid)
         mFavoriteRef.addChildEventListener(mEventListener)
     }
-
 }

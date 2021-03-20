@@ -28,7 +28,6 @@ import kotlinx.android.synthetic.main.content_main.listView
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var mGenre = 0
-    private lateinit var mToolbar: Toolbar
 
     // --- ここから ---
     private lateinit var mDatabaseReference: DatabaseReference
@@ -261,7 +260,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             nav_view.menu.findItem(R.id.nav_favorite).isVisible = true
         }
-        
     }
     // --- ここまで追加する ---
 
