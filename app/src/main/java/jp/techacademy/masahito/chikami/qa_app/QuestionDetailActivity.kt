@@ -17,6 +17,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
     private lateinit var mFavoriteRef: DatabaseReference
+    var flag = true
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {  //snapshotはその時点の状態をそのまま保存したもの
@@ -59,23 +60,19 @@ class QuestionDetailActivity : AppCompatActivity() {
         //からこのメソッドが呼ばれたときは登録済み
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             favoritebutton.setImageResource(R.drawable.ic_star)
-
+            flag = false
         }
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
 
         }
-
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
 
         }
-
         override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
 
         }
-
         override fun onCancelled(databaseError: DatabaseError) {
-
         }
     }
 
@@ -114,7 +111,6 @@ class QuestionDetailActivity : AppCompatActivity() {
                 // --- ここまで ---
             }
 
-
         }
 
         //課題：画面表示したとき
@@ -152,13 +148,15 @@ class QuestionDetailActivity : AppCompatActivity() {
 
                 //お気に入りボタン押した時
                 favoritebutton.setOnClickListener {
-                    if (mFavoriteRef != null) {
+                    if (flag) {
                         //表示を切り替え
                         favoritebutton.setImageResource(R.drawable.ic_star)
                         Log.d("test","お気に入りに追加")
                         //Fiewbaseに登録
                         data["genre"] = mQuestion.genre.toString()
                         mFavoriteRef.setValue(data)
+                        flag = true
+
 
                     } else {
                         //表示切り替え
@@ -166,6 +164,7 @@ class QuestionDetailActivity : AppCompatActivity() {
                         Log.d("test","お気に入り削除")
                         //登録削除
                         mFavoriteRef.removeValue()
+                        flag = false
                     }
                 }
             }
