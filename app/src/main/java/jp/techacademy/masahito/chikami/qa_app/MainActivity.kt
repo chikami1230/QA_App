@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -217,6 +218,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         // ナビゲーションドロワーの設定
+
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.app_name, R.string.app_name)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
@@ -297,22 +299,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             toolbar.title = getString(R.string.menu_compter_label)
             mGenre = 4
         } else if (id == R.id.nav_favorite) {   //お気に入り追加(これからログインしてるとき消す必要がある)
-            toolbar.title = getString(R.string.menu_favorite_label)
-            mGenre = 5
-
+            val intent = Intent(applicationContext, FavoriteActivity::class.java)
+            startActivity(intent)
         }
-            drawer_layout.closeDrawer(GravityCompat.START)
+        drawer_layout.closeDrawer(GravityCompat.START)
 
-        // --- ここから ---
-        // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
-        mQuestionArrayList.clear()
-        mAdapter.setQuestionArrayList(mQuestionArrayList)
-        listView.adapter = mAdapter
-
-            // 選択したジャンルにリスナーを登録する
-        if (mGenreRef != null) {
-            mGenreRef!!.removeEventListener(mEventListener)
-        }
         mQuestionArrayList.clear()
         mAdapter.setQuestionArrayList(mQuestionArrayList)
         mListView.adapter = mAdapter
@@ -323,6 +314,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
         mGenreRef!!.addChildEventListener(mEventListener)
+        // --- ここまで追加する ---
+
+        return true
+    }
+}
+
 //追加//方針変えた
         /*
         if(mFavoriteRef != null){
@@ -344,6 +341,3 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
          */
-        return true
-    }
-}
