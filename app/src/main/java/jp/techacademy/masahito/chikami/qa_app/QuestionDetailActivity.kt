@@ -1,6 +1,7 @@
 package jp.techacademy.masahito.chikami.qa_app
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,8 +16,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mQuestion: Question
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
-
-    private var favorite = false
+    private lateinit var mFavoriteRef: DatabaseReference
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {  //snapshotはその時点の状態をそのまま保存したもの
@@ -53,11 +53,29 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
     }
 
-    private val mFavoriteEventListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapShot: DataSnapshot) {
-            favorite = dataSnapShot.value != null
+    private val mFavoriteListener = object : ChildEventListener {
+
+        //ChildAddedはすでにデータがある場合にしか呼ばれない
+        //からこのメソッドが呼ばれたときは登録済み
+        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+            favoritebutton.setImageResource(R.drawable.ic_star)
+
         }
-        override fun onCancelled(p0: DatabaseError) {
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+
+        }
+
+        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
         }
     }
 
@@ -95,6 +113,8 @@ class QuestionDetailActivity : AppCompatActivity() {
                 startActivity(intent)
                 // --- ここまで ---
             }
+
+
         }
 
         //課題：画面表示したとき
@@ -103,43 +123,51 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         //ログイン済みユーザーを取得
         val dataBaseReference = FirebaseDatabase.getInstance().reference
-        mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
+        mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString())
+            .child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
-
+    }
         //ログインしてなかったらfavoritebutton隠す,してたら表示
-        if (user == null){
-            favoritebutton.visibility = View.GONE
-        }else{
-            favoritebutton.visibility = View.VISIBLE
-        }
+        override fun onResume() {
+            super.onResume()
 
-        //課題：favoritebuttonのclickリスナー
-        //お気に入りを保持させる
-        //firebaseを参照する方法考える
-        //クリックしたらお気に入りに登録/解除(firebase参照)
-        //お気に入り登録/解除で色変わるようにする
+            val user = FirebaseAuth.getInstance().currentUser
 
-        if(favorite){
-            favoritebutton.setImageResource(R.drawable.ic_star)
-        }else{
-            favoritebutton.setImageResource(R.drawable.ic_star_border)
-        }
+            //お気に入りボタンの表示
+            if (user == null) {     //ログインしていない場合
+                //お気に入りボタン非表示
+                favoritebutton.visibility = View.GONE
 
-        val mFavoriteRef = dataBaseReference.child(FavoritePATH).child(mQuestion.questionUid)
-        mFavoriteRef.addValueEventListener(mFavoriteEventListener)
+            } else {               //ログインしている場合
 
-        favoritebutton.setOnClickListener {
-            Log.d("test","favoritebutton押した")
+                //追加
+                val dataBaseReference = FirebaseDatabase.getInstance().reference
+                mFavoriteRef = dataBaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
+                val data = HashMap<String, String>()
 
-            if(favorite){
-                Log.d("test","favoriteから削除")
-                mFavoriteRef.removeValue()
-                favoritebutton.setImageResource(R.drawable.ic_star_border)
-            }else{
-                Log.d("test","favoriteに登録")
-                mFavoriteRef.setValue(mQuestion.questionUid)
-                favoritebutton.setImageResource(R.drawable.ic_star)
+                mFavoriteRef.addChildEventListener(mFavoriteListener)  //追加
+
+                // ボタン表示
+                favoritebutton.visibility = View.VISIBLE
+
+                //お気に入りボタン押した時
+                favoritebutton.setOnClickListener {
+                    if (mFavoriteRef != null) {
+                        //表示を切り替え
+                        favoritebutton.setImageResource(R.drawable.ic_star)
+                        Log.d("test","お気に入りに追加")
+                        //Fiewbaseに登録
+                        data["genre"] = mQuestion.genre.toString()
+                        mFavoriteRef.setValue(data)
+
+                    } else {
+                        //表示切り替え
+                        favoritebutton.setImageResource(R.drawable.ic_star_border)
+                        Log.d("test","お気に入り削除")
+                        //登録削除
+                        mFavoriteRef.removeValue()
+                    }
+                }
             }
         }
-    }
 }

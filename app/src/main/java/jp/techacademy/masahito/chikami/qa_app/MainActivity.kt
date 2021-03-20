@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ListView
+import android.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import com.google.android.material.navigation.NavigationView
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.content_main.listView
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var mGenre = 0
+    private lateinit var mToolbar: Toolbar
 
     // --- ここから ---
     private lateinit var mDatabaseReference: DatabaseReference
@@ -33,11 +35,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mAdapter: QuestionsListAdapter
     private lateinit var mListView: ListView
 
-    private lateinit var mFavoriteMap :Map<String,String>
+    //private lateinit var mFavoriteMap :Map<String,String>
 
     private var mGenreRef: DatabaseReference? = null
-    private var mFavoriteRef:DatabaseReference? = null
-    private var mQuestionRef: DatabaseReference? = null
+
+
+    //private var mFavoriteRef:DatabaseReference? = null
+    //private var mQuestionRef: DatabaseReference? = null
+
+
 
     private val mEventListener = object : ChildEventListener {  //データに追加・変化があった時に受け取るChildEventListenerを置く
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
@@ -112,6 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
     // --- ここまで追加する ---
 //追加
+    /*
     private val mFavoriteListener = object : ValueEventListener{
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             if(dataSnapshot.value == null){
@@ -174,7 +181,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-
+*/
 //ここまで
 
 
@@ -242,8 +249,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
         // 1:趣味を既定の選択とする
+        val user = FirebaseAuth.getInstance().currentUser
         if(mGenre == 0) {
             onNavigationItemSelected(nav_view.menu.getItem(0))
+        }
+        //お気に入りタブ非表示
+        if (user == null) {
+            nav_view.menu.findItem(R.id.nav_favorite).isVisible = false
+        } else {
+            nav_view.menu.findItem(R.id.nav_favorite).isVisible = true
         }
         
     }
@@ -299,7 +313,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (mGenreRef != null) {
             mGenreRef!!.removeEventListener(mEventListener)
         }
-//追加
+        mQuestionArrayList.clear()
+        mAdapter.setQuestionArrayList(mQuestionArrayList)
+        mListView.adapter = mAdapter
+
+        // 選択したジャンルにリスナーを登録する
+        if (mGenreRef != null) {
+            mGenreRef!!.removeEventListener(mEventListener)
+        }
+        mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
+        mGenreRef!!.addChildEventListener(mEventListener)
+//追加//方針変えた
+        /*
         if(mFavoriteRef != null){
             mFavoriteRef!!.removeEventListener(mFavoriteListener)
         }
@@ -317,6 +342,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
             mGenreRef!!.addChildEventListener(mEventListener)
         }
+
+         */
         return true
     }
 }
